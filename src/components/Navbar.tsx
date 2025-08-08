@@ -24,7 +24,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-4">
           <Button asChild>
-            <Link href="/login">Login</Link>
+            <Link href="/sign-in">Login</Link>
           </Button>
           <Button variant={"ghost"} asChild>
             <Link href="/sign-up">Sign Up</Link>
