@@ -13,15 +13,20 @@ export default function BecomeMentorPage() {
   const { isSignedIn, isLoaded } = useUser();
   const [university, setUniversity] = useState('');
   const [yearOfStudy, setYearOfStudy] = useState('');
-  const applyToBeMentor = useMutation(api.mentors.applyToBeMentor);
+  const applyToBeMentor = useMutation(api.users.applyToBeMentor);
 
   if (!isLoaded) return <div>Loading...</div>;
   if (!isSignedIn) return <div>Please sign in to apply.</div>;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const yearNum = parseInt(yearOfStudy, 10);
+    if (isNaN(yearNum)) {
+      toast.error('Please enter a valid year of study.');
+      return;
+    }
     try {
-      await applyToBeMentor({ university, yearOfStudy });
+      await applyToBeMentor({ university, yearOfStudy: yearNum });
       toast.success('Application submitted!');
       setUniversity('');
       setYearOfStudy('');

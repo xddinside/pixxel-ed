@@ -5,8 +5,10 @@ import { Button } from "./ui/button";
 import { ModeToggle } from "./ui/ModeToggle";
 
 import { BookOpenText } from "lucide-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 
 export default function Navbar() {
+  const { isSignedIn } = useUser();
 
   return (
     <nav className="border-b border-border py-5 flex items-center justify-between ">
@@ -22,14 +24,18 @@ export default function Navbar() {
       <div className="flex items-center gap-4 px-4 sm:px-6">
         <ModeToggle />
 
-        <div className="hidden md:flex items-center gap-4">
-          <Button asChild>
-            <Link href="/sign-in">Login</Link>
-          </Button>
-          <Button variant={"ghost"} asChild>
-            <Link href="/sign-up">Sign Up</Link>
-          </Button>
-        </div>
+        {!isSignedIn ? (
+          <div className="hidden md:flex items-center gap-4">
+            <Button asChild>
+              <Link href="/sign-in">Login</Link>
+            </Button>
+            <Button variant={"ghost"} asChild>
+              <Link href="/sign-up">Sign Up</Link>
+            </Button>
+          </div>
+        ) : (
+          <UserButton afterSignOutUrl="/" />
+        )}
       </div>
     </nav>
   );
