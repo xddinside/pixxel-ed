@@ -22,7 +22,7 @@ export default function RoleSelectionPage() {
       if (role === 'mentor') {
         router.push('/become-mentor');
       } else {
-        router.push('/find-mentor');
+        router.push('/student-details');
       }
     } catch (error) {
       toast.error("Failed to update role.", {

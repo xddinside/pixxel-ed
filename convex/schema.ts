@@ -31,5 +31,13 @@ export default defineSchema({
         gradesUrl: v.optional(v.string()),
     })),
 
+    studentDetails: v.optional(v.object({
+        name: v.string(),
+        bio: v.string(),
+        university: v.string(),
+        subjects: v.array(v.string()),
+        grades: v.array(v.string()),
+    })),
+
   }).index("by_clerk_id", ["clerkId"]),
 });

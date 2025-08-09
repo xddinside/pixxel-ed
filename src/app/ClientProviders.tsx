@@ -1,3 +1,4 @@
+// src/app/ClientProviders.tsx
 "use client";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -16,6 +17,11 @@ function RoleRedirect({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (currentUser && pathname !== '/') {
+            if (currentUser.role === 'admin' && pathname !== '/admin') {
+                router.push('/admin');
+                return;
+            }
+            
             if (currentUser.role === 'none' && pathname !== '/role-selection') {
                 router.push('/role-selection');
             } else if (currentUser.role !== 'none' && pathname === '/role-selection') {
@@ -24,11 +30,20 @@ function RoleRedirect({ children }: { children: React.ReactNode }) {
                 router.push('/become-mentor');
             } else if (currentUser.role === 'mentor' && currentUser.mentorStatus !== 'none' && pathname === '/become-mentor') {
                 router.push('/dashboard');
+            } else if (currentUser.role === 'student' && !currentUser.studentDetails && pathname !== '/student-details') {
+                router.push('/student-details');
+            } else if (currentUser.role === 'student' && currentUser.studentDetails && pathname === '/student-details') {
+                router.push('/find-mentor');
             }
         }
     }, [currentUser, pathname, router]);
 
-    if (currentUser && pathname !== '/' && ((currentUser.role === 'none' && pathname !== '/role-selection') || (currentUser.role === 'mentor' && currentUser.mentorStatus === 'none' && pathname !== '/become-mentor'))) {
+    if (currentUser && pathname !== '/' && (
+        (currentUser.role === 'admin' && pathname !== '/admin') ||
+        (currentUser.role === 'none' && pathname !== '/role-selection') ||
+        (currentUser.role === 'mentor' && currentUser.mentorStatus === 'none' && pathname !== '/become-mentor') ||
+        (currentUser.role === 'student' && !currentUser.studentDetails && pathname !== '/student-details')
+    )) {
         return <div>Loading...</div>;
     }
 
