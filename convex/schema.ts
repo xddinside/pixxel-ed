@@ -1,3 +1,4 @@
+// convex/schema.ts
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -45,5 +46,8 @@ export default defineSchema({
     userId: v.id("users"),
     chatId: v.string(),
     text: v.string(),
+    fileUrl: v.optional(v.string()),
+    fileName: v.optional(v.string()),
+    fileType: v.optional(v.string()),
   }).index("by_chatId", ["chatId"]),
 });

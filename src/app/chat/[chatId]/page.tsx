@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@clerk/nextjs';
 import './page.css';
-import { SendHorizonal } from 'lucide-react';
+import { SendHorizonal, Download } from 'lucide-react'; // Import Download icon
+import { UploadButton } from '@/utils/uploadthing';
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -32,6 +33,21 @@ export default function ChatPage() {
     }
   };
 
+  const onUploadComplete = (res: any) => {
+    if (res) {
+      const file = res[0];
+      sendMessage({
+        chatId,
+        // No redundant text, just the file details
+        fileUrl: file.url,
+        fileName: file.name,
+        fileType: file.type,
+      });
+    }
+    // Changed from alert to toast for better UX
+    toast.success("Upload complete!");
+  };
+
   return (
     <div className="chat-wrapper">
       <div className="chat-container">
@@ -47,7 +63,17 @@ export default function ChatPage() {
             >
               <div className="message-bubble">
                 <div className="message-author">{message.author}</div>
-                <p className="message-text">{message.text}</p>
+                {message.text && <p className="message-text">{message.text}</p>}
+                {message.fileUrl && (
+                  message.fileType?.startsWith('image/') ? (
+                    <img src={message.fileUrl} alt={message.fileName || 'Uploaded image'} className="uploaded-image" />
+                  ) : (
+                      <a href={message.fileUrl} target="_blank" rel="noopener noreferrer" className="file-download-link">
+                        <Download className="file-download-icon" />
+                        <span>{message.fileName}</span>
+                      </a>
+                    )
+                )}
               </div>
             </div>
           ))}
@@ -64,6 +90,20 @@ export default function ChatPage() {
               <SendHorizonal size={20} />
               <span className="sr-only">Send</span>
             </Button>
+            <UploadButton
+              endpoint="imageUploader"
+              onClientUploadComplete={onUploadComplete}
+              onUploadError={(error: Error) => {
+                toast.error(`Upload Failed: ${error.message}`);
+              }}
+            />
+            <UploadButton
+              endpoint="docUploader"
+              onClientUploadComplete={onUploadComplete}
+              onUploadError={(error: Error) => {
+                toast.error(`Upload Failed: ${error.message}`);
+              }}
+            />
           </form>
         </div>
       </div>

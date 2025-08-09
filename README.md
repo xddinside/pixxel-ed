@@ -54,7 +54,9 @@
 - [ ] add dummy data for convex table to show multiple mentors (manly for the find-mentor page)
 
 - [x] create chat section between mentors and students
-    - [ ] setup image and document uploads and doc downloads in the chat for both sides
+    - [x] setup image and document uploads and doc downloads in the chat for both sides
+
+- [ ] make the file upload buttons nicer (acd check document upload and download like pdf)
 
 - [ ] add a notification button on the topright in nav between the user profile from clerk and the mode toggle button (the notif button shows only if the user is logged in).
     - Handle the logic to send a notification there in a notification bubble if a chat message is received from anyone.
