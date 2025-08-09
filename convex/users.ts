@@ -29,11 +29,31 @@ export const createUser = internalMutation({
   },
 });
 
+export const getCurrentUser = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    return user;
+  },
+});
+
 // Mutation for a user to apply to become a mentor
 export const applyToBeMentor = mutation({
   args: {
+    name: v.string(),
+    bio: v.string(),
     university: v.string(),
     yearOfStudy: v.number(),
+    subjects: v.array(v.string()),
+    grades: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -53,8 +73,12 @@ export const applyToBeMentor = mutation({
     await ctx.db.patch(user._id, {
       mentorStatus: "pending",
       applicationDetails: {
+        name: args.name,
+        bio: args.bio,
         university: args.university,
         yearOfStudy: args.yearOfStudy,
+        subjects: args.subjects,
+        grades: args.grades,
       },
     });
   },
@@ -83,28 +107,46 @@ export const getPendingMentors = query({
   },
 });
 
-// Admin-only mutation to approve a mentor application
-export const approveMentor = mutation({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const adminUser = await ctx.db
+export const getApprovedMentors = query({
+  handler: async (ctx) => {
+    const mentors = await ctx.db
       .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .unique();
-
-    if (!adminUser || adminUser.role !== "admin") {
-      throw new Error("You are not authorized to perform this action.");
-    }
-
-    await ctx.db.patch(args.userId, {
-      role: "mentor",
-      mentorStatus: "approved",
-    });
+      .filter((q) => q.eq(q.field("mentorStatus"), "approved"))
+      .collect();
+    return mentors;
   },
 });
+
+// Admin-only mutation to approve a mentor application
+export const approveMentor = mutation({
+    args: { userId: v.id("users") },
+    handler: async (ctx, args) => {
+      const identity = await ctx.auth.getUserIdentity();
+      if (!identity) throw new Error("Not authenticated");
+  
+      const adminUser = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+        .unique();
+  
+      if (!adminUser || adminUser.role !== "admin") {
+        throw new Error("You are not authorized to perform this action.");
+      }
+  
+      const userToApprove = await ctx.db.get(args.userId);
+      if (!userToApprove) {
+        throw new Error("User to approve not found.");
+      }
+  
+      await ctx.db.patch(args.userId, {
+        name: userToApprove.applicationDetails?.name,
+        role: "mentor",
+        mentorStatus: "approved",
+        subjects: userToApprove.applicationDetails?.subjects,
+        bio: userToApprove.applicationDetails?.bio,
+      });
+    },
+  });
 
 // Admin-only mutation to reject a mentor application
 export const rejectMentor = mutation({

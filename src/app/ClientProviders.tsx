@@ -3,6 +3,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/Navbar";
 import { ConvexClientProvider } from "./ConvexClientProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       >
         <Navbar />
         {children}
+        <Toaster />
       </ThemeProvider>
     </ConvexClientProvider>
   );
