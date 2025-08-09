@@ -4,11 +4,15 @@ import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Doc, Id } from '@/convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
   const students = useQuery(api.users.getUsersByIds, { userIds: studentIds ?? [] });
+  const currentUser = useQuery(api.users.getCurrentUser);
 
-  if (students === undefined) {
+
+  if (students === undefined || currentUser === undefined) {
     return <div>Loading students...</div>;
   }
 
@@ -19,16 +23,21 @@ function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
         <p>You don&apos;t have any students yet.</p>
       ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {students.map((student) => (
-              <Card key={student._id}>
-                <CardHeader>
-                  <CardTitle>{student.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{student.email}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {students.map((student) => {
+              const chatId = [currentUser?._id, student._id].sort().join('_');
+              return(
+                <Card key={student._id}>
+                  <CardHeader>
+                    <CardTitle>{student.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{student.email}</p>
+                    <Link href={`/chat/${chatId}`}>
+                      <Button className="mt-4">Chat</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              )})}
           </div>
         )}
     </div>
@@ -37,8 +46,9 @@ function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
 
 function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
   const mentors = useQuery(api.users.getUsersByIds, { userIds: mentorIds ?? [] });
+  const currentUser = useQuery(api.users.getCurrentUser);
 
-  if (mentors === undefined) {
+  if (mentors === undefined || currentUser === undefined) {
     return <div>Loading mentors...</div>;
   }
 
@@ -49,23 +59,28 @@ function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
         <p>You haven&apos;t connected with any mentors yet. <a href="/find-mentor" className="text-blue-500 underline">Find one now!</a></p>
       ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mentors.map((mentor) => (
-              <Card key={mentor._id}>
-                <CardHeader>
-                  <CardTitle>{mentor.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{mentor.email}</p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {mentor.subjects?.map((subject, index) => (
-                      <span key={index} className="px-2 py-1 text-xs font-semibold rounded-full bg-secondary text-secondary-foreground">
-                        {subject}
-                      </span>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {mentors.map((mentor) => {
+              const chatId = [currentUser?._id, mentor._id].sort().join('_');
+              return(
+                <Card key={mentor._id}>
+                  <CardHeader>
+                    <CardTitle>{mentor.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{mentor.email}</p>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {mentor.subjects?.map((subject, index) => (
+                        <span key={index} className="px-2 py-1 text-xs font-semibold rounded-full bg-secondary text-secondary-foreground">
+                          {subject}
+                        </span>
+                      ))}
+                    </div>
+                    <Link href={`/chat/${chatId}`}>
+                      <Button className="mt-4">Chat</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              )})}
           </div>
         )}
     </div>

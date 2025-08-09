@@ -40,4 +40,10 @@ export default defineSchema({
     })),
 
   }).index("by_clerk_id", ["clerkId"]),
+  
+  messages: defineTable({
+    userId: v.id("users"),
+    chatId: v.string(),
+    text: v.string(),
+  }).index("by_chatId", ["chatId"]),
 });
