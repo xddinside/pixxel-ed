@@ -8,10 +8,6 @@ import { useAuth } from "@clerk/nextjs";
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
-  const { getToken } = useAuth();
-
-  console.log(getToken)
-
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
       {children}

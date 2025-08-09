@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
-import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ClientProviders } from "./ClientProviders";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +23,8 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
-}>) {
+    children: React.ReactNode;
+  }>) {
   return (
     <ClerkProvider
       appearance={{
@@ -37,17 +35,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ConvexClientProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Navbar />
-              {children}
-            </ThemeProvider>
-          </ConvexClientProvider>
+          <ClientProviders>{children}</ClientProviders>
         </body>
       </html>
     </ClerkProvider>
