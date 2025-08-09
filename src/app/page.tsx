@@ -2,11 +2,12 @@
 
 import { useRef } from "react";
 import "./page.css";
-import { motion, Variants } from "framer-motion"; // Import Variants
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {useGSAP} from "@gsap/react";
 import SplitText from "gsap/SplitText";
+import { useEffect } from "react";
 
 gsap.registerPlugin(useGSAP);
 
@@ -53,7 +54,7 @@ useGSAP(() => {
   const brandName = "PixxelEd";
 
   // Container animation — waits and triggers each child letter in sequence
-  const titleContainerVariants: Variants = { // Added Variants type
+  const titleContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -64,7 +65,7 @@ useGSAP(() => {
   };
 
   // Each letter's animation
-  const letterVariants: Variants = { // Added Variants type
+  const letterVariants = {
     hidden: { opacity: 0, y: 100, rotateX: -90 },
     visible: {
       opacity: 1,
@@ -94,7 +95,7 @@ useGSAP(() => {
               }
             >
               {letter}
-            </motion.span>
+            </motion.span>          
           ))}
         </motion.h1>
 
