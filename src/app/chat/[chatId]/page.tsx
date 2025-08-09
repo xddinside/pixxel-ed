@@ -4,58 +4,64 @@ import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useParams } from 'next/navigation';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useUser } from '@clerk/nextjs';
+import './page.css';
 
 export default function ChatPage() {
-    const { chatId } = useParams<{ chatId: string }>();
-    const messages = useQuery(api.messages.list, { chatId });
-    const sendMessage = useMutation(api.messages.send);
-    const [newMessageText, setNewMessageText] = useState("");
-    const listRef = useRef<HTMLDivElement>(null);
+  const { chatId } = useParams<{ chatId: string }>();
+  const messages = useQuery(api.messages.list, { chatId });
+  const sendMessage = useMutation(api.messages.send);
+  const [newMessageText, setNewMessageText] = useState("");
+  const listRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
 
-    useEffect(() => {
-        if (listRef.current) {
-            listRef.current.scrollTop = listRef.current.scrollHeight;
-        }
-    }, [messages]);
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (newMessageText.trim() !== "") {
-            await sendMessage({ chatId, text: newMessageText });
-            setNewMessageText("");
-        }
-    };
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (newMessageText.trim() !== "") {
+      // Send a new message and clear the input field.
+      await sendMessage({ chatId, text: newMessageText });
+      setNewMessageText("");
+    }
+  };
 
-    return (
-        <div className="flex flex-col h-screen">
-            <Card className="flex-grow flex flex-col m-4">
-                <CardHeader>
-                    <CardTitle>Chat Room</CardTitle>
-                </CardHeader>
-                <CardContent ref={listRef} className="flex-grow overflow-y-auto">
-                    {messages?.map((message) => (
-                        <div key={message._id} className="flex items-center mb-2">
-                            <div className="font-bold mr-2">{message.author}:</div>
-                            <div>{message.text}</div>
-                        </div>
-                    ))}
-                </CardContent>
-                <CardFooter>
-                    <form onSubmit={handleSubmit} className="flex w-full">
-                        <Input
-                            value={newMessageText}
-                            onChange={(event) => setNewMessageText(event.target.value)}
-                            placeholder="Write a message…"
-                        />
-                        <Button type="submit" disabled={!newMessageText.trim()}>
-                            Send
-                        </Button>
-                    </form>
-                </CardFooter>
-            </Card>
-        </div>
-    );
+  return (
+    <div className="chat-container">
+      <div className="chat-header">
+        <h2>Chat Room</h2>
+      </div>
+      <div ref={listRef} className="chat-messages">
+        {messages?.map((message) => (
+          <div
+            key={message._id}
+            className={`message-bubble ${message.clerkId === user?.id ? 'sent' : 'received'
+}`}
+          >
+            <div className="message-author">{message.author}</div>
+            <div className="message-text">{message.text}</div>
+          </div>
+        ))}
+      </div>
+      <div className="chat-footer">
+        <form onSubmit={handleSubmit} className="flex w-full">
+          <Input
+            value={newMessageText}
+            onChange={(event) => setNewMessageText(event.target.value)}
+            placeholder="Write a message…"
+            className="flex-grow"
+          />
+          <Button type="submit" disabled={!newMessageText.trim()}>
+            Send
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
 }

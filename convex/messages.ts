@@ -17,6 +17,7 @@ export const list = query({
         return {
           ...message,
           author: user?.name,
+          clerkId: user?.clerkId,
         };
       })
     );
@@ -26,7 +27,6 @@ export const list = query({
 export const send = mutation({
   args: { chatId: v.string(), text: v.string() },
   handler: async (ctx, args) => {
-    // Get the current user from the authentication context.
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Called send message without authentication.");
@@ -39,7 +39,6 @@ export const send = mutation({
     if (!user) {
       throw new Error("User not found.");
     }
-    // Create a new message and insert it into the database.
     await ctx.db.insert("messages", {
       userId: user._id,
       chatId: args.chatId,
