@@ -1,3 +1,4 @@
+import { Doc } from "./_generated/dataModel";
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -26,6 +27,19 @@ export const createUser = internalMutation({
       role: "none",
       mentorStatus: "none",
     });
+  },
+});
+
+export const getUsersByIds = query({
+  args: {
+    userIds: v.array(v.id("users")),
+  },
+  handler: async (ctx, args) => {
+    const users = await Promise.all(
+      args.userIds.map((userId) => ctx.db.get(userId))
+    );
+    
+    return users.filter((user): user is Doc<"users"> => user !== null);
   },
 });
 
@@ -239,3 +253,45 @@ export const deleteUser = internalMutation({
     await ctx.db.delete(user._id);
   },
 });
+
+export const connectToMentor = mutation({
+  args: {
+    mentorId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("You must be logged in to connect with a mentor.");
+    }
+    const student = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!student || student.role !== "student") {
+      throw new Error("Only students can connect with mentors.");
+    }
+
+    const mentor = await ctx.db.get(args.mentorId);
+    if (!mentor || mentor.role !== "mentor") {
+      throw new Error("This user is not a valid mentor.");
+    }
+
+    const existingMentorIds = student.mentorIds ?? [];
+    if (!existingMentorIds.includes(args.mentorId)) {
+      await ctx.db.patch(student._id, {
+        mentorIds: [...existingMentorIds, args.mentorId],
+      });
+    }
+
+    const existingStudentIds = mentor.studentIds ?? [];
+    if (!existingStudentIds.includes(student._id)) {
+      await ctx.db.patch(mentor._id, {
+        studentIds: [...existingStudentIds, student._id],
+      });
+    }
+  },
+});
+
+
+

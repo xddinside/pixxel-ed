@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./ui/ModeToggle";
-
 import { BookOpenText } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function Navbar() {
   const { isSignedIn } = useUser();
+  const currentUser = useQuery(api.users.getCurrentUser);
+  const userRole = currentUser?.role;
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-5 flex items-center justify-between ">
@@ -20,9 +23,17 @@ export default function Navbar() {
             <span>Pixxel<span className="text-blue-500">Ed</span></span>
           </Link>
 
-          <div>
+          {isSignedIn &&
+          <div className="hidden md:block">
             <Link href="/dashboard" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Dashboard</Link>
           </div>
+          }
+          
+          { isSignedIn && (userRole === "student") && (
+            <div>
+              <Link href="/find-mentor" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Find a mentor</Link>
+            </div>
+          )}
 
         </h1>
       </div>

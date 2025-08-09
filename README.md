@@ -28,19 +28,32 @@
     - [x] if user clicks on join as a mentor, redirect them to the /become-mentor page
     - [x] if user clicks on student, redirect them to a new page (find-mentor), where they can see the mentors that are already registered
         - The students can choose their mentor from this page.
-        - [ ] make it so that the student can click on the connect button only once, and then it shows a toast to show that they're connected. also instead of the connect button, show Connected to mentor (after user has clicked on it, to make the button disabled).
+        - [x] make it so that the student can click on the connect button only once, and then it shows a toast to show that they're connected. also instead of the connect button, show Connected to mentor (after user has clicked on it, to make the button disabled).
 
 - [x] make a "none" role, and make it the default
 - [x] make it so that if a user's role is "none", always redirect them to the /role-selection page
 
-- [ ] handle the connection between the students and the mentor, so that every student stores who their mentor is and every mentor stores who their student is (so that we can access them to show them to the user)
+- [x] handle the connection between the students and the mentor, so that every student stores who their mentor is and every mentor stores who their student is (so that we can access them to show them to the user)
+
+- [ ] when the student is selected in the /role-selection, make it so that the user gets redirected to a new page where the user has to write their details (like how we've implemented the /become-mentor page). take in details and store them, such as:
+    - Name
+    - Subjects [ (that they'd like to get mentored in, only to show their preference, doesn't lock them), (also, take it in a dropdown like we've done in /become-mentor) ]
+    - Bio (that their mentors will be able to see, to tell them about themselves)
+    - School / uni
+    - Grades (in the subject they'd selected, just to give the mentors an idea of their students)
+
+- [ ] when the mentor submits the form (in /become-mentor), set the name outside the application details as well 
 
 - [ ] create dashboards for student and mentor
     - [ ] in the mentor dashboard, the user can see it only if they're a mentor, and can see their students and can chat with them.
+        - [ ] use the studentIDs to iterate through and show each student
     - [ ] in the student dashboard, the user can see their mentors (only if they're a student), and can chat with their mentors.
+        - [ ] use the mentorIds to iterate through and show each mentor
 
 - [ ] create chat section between mentors and students
     - [ ] setup image and document uploads and doc downloads in the chat for both sides
+
+- [ ] change the mutation so that when a user is deleted, it gets the corresponding connected student / admin (if any) and then removes the id of the user that was deleted from their list of connected student / mentor Ids. basically, let's say mentor A had a student B, and A deletes his account. then in the mentorIds of B, we should delete the Id of A (as A no longer exists in our db after deletion)
 
 - [ ] improve the landing page
     - remove the excess empty space below the last part
@@ -49,5 +62,5 @@
 
 ### TODO if extra time (not in order)
 
-- in the mentor form, take grades in image and pdf form, and make them viewable from the admin's side on his dashboard
-- allow mentor to stop accepting students any longer, which would prevent them from being visible in the page where students can search for mentors. the mentors can still be a mentor and chat with their current students however.
+- [ ] in the mentor form, take grades in image and pdf form, and make them viewable from the admin's side on his dashboard
+- [ ] allow mentor to stop accepting students any longer, which would prevent them from being visible in the page where students can search for mentors. the mentors can still be a mentor and chat with their current students however.

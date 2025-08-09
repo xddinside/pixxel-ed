@@ -18,6 +18,9 @@ export default defineSchema({
     bio: v.optional(v.string()),
     subjects: v.optional(v.array(v.string())),
 
+    mentorIds: v.optional(v.array(v.id("users"))),
+    studentIds: v.optional(v.array(v.id("users"))),
+
     applicationDetails: v.optional(v.object({
         name: v.string(),
         bio: v.string(),
