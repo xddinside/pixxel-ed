@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import '@clerk/themes/shadcn.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,12 +42,11 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
 }
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(86.378% 0.0001 271.152);
+  --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -111,7 +111,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
-  --trail-color: rgb(17, 17, 17);
 }
 
 @layer base {
@@ -122,4 +121,3 @@
     @apply bg-background text-foreground;
   }
 }
-
