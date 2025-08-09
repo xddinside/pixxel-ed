@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@clerk/nextjs';
 import './page.css';
+import { SendHorizonal } from 'lucide-react';
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -26,41 +27,45 @@ export default function ChatPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (newMessageText.trim() !== "") {
-      // Send a new message and clear the input field.
       await sendMessage({ chatId, text: newMessageText });
       setNewMessageText("");
     }
   };
 
   return (
-    <div className="chat-container">
-      <div className="chat-header">
-        <h2>Chat Room</h2>
-      </div>
-      <div ref={listRef} className="chat-messages">
-        {messages?.map((message) => (
-          <div
-            key={message._id}
-            className={`message-bubble ${message.clerkId === user?.id ? 'sent' : 'received'
+    <div className="chat-wrapper">
+      <div className="chat-container">
+        <div className="chat-header">
+          <h2 className="font-bold text-2xl">Chat</h2>
+        </div>
+        <div ref={listRef} className="chat-messages">
+          {messages?.map((message) => (
+            <div
+              key={message._id}
+              className={`message-container ${message.clerkId === user?.id ? 'sent' : 'received'
 }`}
-          >
-            <div className="message-author">{message.author}</div>
-            <div className="message-text">{message.text}</div>
-          </div>
-        ))}
-      </div>
-      <div className="chat-footer">
-        <form onSubmit={handleSubmit} className="flex w-full">
-          <Input
-            value={newMessageText}
-            onChange={(event) => setNewMessageText(event.target.value)}
-            placeholder="Write a message…"
-            className="flex-grow"
-          />
-          <Button type="submit" disabled={!newMessageText.trim()}>
-            Send
-          </Button>
-        </form>
+            >
+              <div className="message-bubble">
+                <div className="message-author">{message.author}</div>
+                <p className="message-text">{message.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="chat-footer">
+          <form onSubmit={handleSubmit} className="flex items-center gap-2">
+            <Input
+              value={newMessageText}
+              onChange={(event) => setNewMessageText(event.target.value)}
+              placeholder="Type a message…"
+              className="flex-grow"
+            />
+            <Button type="submit" disabled={!newMessageText.trim()} size="icon" className='bg-blue-500 hover:bg-blue-600'>
+              <SendHorizonal size={20} />
+              <span className="sr-only">Send</span>
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );

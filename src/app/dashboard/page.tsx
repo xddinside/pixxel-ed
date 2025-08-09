@@ -33,7 +33,7 @@ function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
                   <CardContent>
                     <p className="text-sm text-muted-foreground">{student.email}</p>
                     <Link href={`/chat/${chatId}`}>
-                      <Button className="mt-4">Chat</Button>
+                      <Button className="mt-4 cursor-pointer">Chat</Button>
                     </Link>
                   </CardContent>
                 </Card>
@@ -76,7 +76,7 @@ function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
                       ))}
                     </div>
                     <Link href={`/chat/${chatId}`}>
-                      <Button className="mt-4">Chat</Button>
+                      <Button className="mt-4 cursor-pointer">Chat</Button>
                     </Link>
                   </CardContent>
                 </Card>

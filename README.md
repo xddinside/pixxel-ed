@@ -45,14 +45,19 @@
 - [x] when the mentor submits the form (in /become-mentor), set the name outside the application details as well 
 - [x] redirect the mentor (after they select the role as mentor) to the /become-mentor page always (isntead of the dashboard), until they fill the form in the /become-mentor page.
 
-- [ ] create dashboards for student and mentor
-    - [ ] in the mentor dashboard, the user can see it only if they're a mentor, and can see their students and can chat with them.
-        - [ ] use the studentIDs to iterate through and show each student
-    - [ ] in the student dashboard, the user can see their mentors (only if they're a student), and can chat with their mentors.
-        - [ ] use the mentorIds to iterate through and show each mentor
+- [x] create dashboards for student and mentor
+    - [x] in the mentor dashboard, the user can see it only if they're a mentor, and can see their students and can chat with them.
+        - [x] use the studentIDs to iterate through and show each student
+    - [x] in the student dashboard, the user can see their mentors (only if they're a student), and can chat with their mentors.
+        - [x] use the mentorIds to iterate through and show each mentor
 
-- [ ] create chat section between mentors and students
+- [ ] add dummy data for convex table to show multiple mentors (manly for the find-mentor page)
+
+- [x] create chat section between mentors and students
     - [ ] setup image and document uploads and doc downloads in the chat for both sides
+
+- [ ] add a notification button on the topright in nav between the user profile from clerk and the mode toggle button (the notif button shows only if the user is logged in).
+    - Handle the logic to send a notification there in a notification bubble if a chat message is received from anyone.
 
 - [ ] change the mutation so that when a user is deleted, it gets the corresponding connected student / admin (if any) and then removes the id of the user that was deleted from their list of connected student / mentor Ids. basically, let's say mentor A had a student B, and A deletes his account. then in the mentorIds of B, we should delete the Id of A (as A no longer exists in our db after deletion)
 
