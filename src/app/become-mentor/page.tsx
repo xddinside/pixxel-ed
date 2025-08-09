@@ -10,6 +10,7 @@ import { useUser } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Doc } from '@/convex/_generated/dataModel';
+import { Textarea } from '@/components/ui/textarea';
 
 const subjects = [
   { label: 'Mathematics', value: 'mathematics' },
@@ -24,8 +25,10 @@ const subjects = [
 ];
 
 export default function BecomeMentorPage() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { user } = useUser();
   const currentUser = useQuery(api.users.getCurrentUser);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [university, setUniversity] = useState('');
   const [yearOfStudy, setYearOfStudy] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -34,14 +37,17 @@ export default function BecomeMentorPage() {
   const applyToBeMentor = useMutation(api.users.applyToBeMentor);
 
   useEffect(() => {
-    if (currentUser?.mentorStatus && (currentUser.mentorStatus === 'pending' || currentUser.mentorStatus === 'approved')) {
-      setSubmissionStatus('submitted');
+    if (currentUser) {
+      if (currentUser.mentorStatus === 'pending' || currentUser.mentorStatus === 'approved') {
+        setSubmissionStatus('submitted');
+      }
+      setName(currentUser.name);
     }
   }, [currentUser]);
 
 
-  if (!isLoaded || currentUser === undefined) return <div className="p-4">Loading...</div>;
-  if (!isSignedIn) return <div className="p-4">Please sign in to apply.</div>;
+  if (!user || currentUser === undefined) return <div className="p-4">Loading...</div>;
+  if (!user) return <div className="p-4">Please sign in to apply.</div>;
 
   const handleSubjectChange = (newSubjects: string[]) => {
     if (newSubjects.length > 3) {
@@ -84,6 +90,8 @@ export default function BecomeMentorPage() {
 
     try {
       await applyToBeMentor({
+        name,
+        bio,
         university,
         yearOfStudy: yearNum,
         subjects: selectedSubjects,
@@ -91,10 +99,6 @@ export default function BecomeMentorPage() {
       });
       toast.success('Application submitted!');
       setSubmissionStatus('submitted');
-      setUniversity('');
-      setYearOfStudy('');
-      setSelectedSubjects([]);
-      setGrades({});
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       toast.error('Failed to submit application.', {
@@ -127,6 +131,22 @@ export default function BecomeMentorPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Input
+                placeholder="Full Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <p className="text-xs text-muted-foreground mt-1 px-2">This name will be visible to students.</p>
+            </div>
+            <Textarea
+              placeholder="Your Bio (Tell students why they should pick you!)"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              required
+              rows={4}
+            />
             <Input
               placeholder="University / School"
               value={university}
@@ -145,6 +165,7 @@ export default function BecomeMentorPage() {
               value={selectedSubjects}
               onChange={handleSubjectChange}
               placeholder="Select up to 3 subjects"
+              max={3}
             />
             {selectedSubjects.map((subject) => (
               <Input

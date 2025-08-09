@@ -82,7 +82,7 @@ export default function AdminDashboard() {
                 className="flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl"
               >
                 <CardHeader>
-                  <CardTitle className="text-xl font-bold">{mentor.name}</CardTitle>
+                  <CardTitle className="text-xl font-bold">{mentor.applicationDetails?.name}</CardTitle>
                   <CardDescription className="text-base pt-1">
                     {mentor.applicationDetails?.university} - Year {mentor.applicationDetails?.yearOfStudy}
                   </CardDescription>
@@ -106,12 +106,14 @@ export default function AdminDashboard() {
                     {selectedMentor?._id === mentor._id && (
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>{selectedMentor.name}'s Application</DialogTitle>
+                          <DialogTitle>{selectedMentor.applicationDetails?.name}&apos;s Application</DialogTitle>
                           <DialogDescription>
                             {selectedMentor.applicationDetails?.university} - Year {selectedMentor.applicationDetails?.yearOfStudy}
                           </DialogDescription>
                         </DialogHeader>
                         <div>
+                          <h4 className="font-semibold mt-4">Bio:</h4>
+                          <p className="text-sm text-muted-foreground">{selectedMentor.applicationDetails?.bio}</p>
                           <h4 className="font-semibold mt-4">Subjects and Grades:</h4>
                           <ul className="list-disc list-inside space-y-1 mt-2">
                             {selectedMentor.applicationDetails?.subjects?.map((subject, index) => (

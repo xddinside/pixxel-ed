@@ -48,6 +48,8 @@ export const getCurrentUser = query({
 // Mutation for a user to apply to become a mentor
 export const applyToBeMentor = mutation({
   args: {
+    name: v.string(),
+    bio: v.string(),
     university: v.string(),
     yearOfStudy: v.number(),
     subjects: v.array(v.string()),
@@ -71,6 +73,8 @@ export const applyToBeMentor = mutation({
     await ctx.db.patch(user._id, {
       mentorStatus: "pending",
       applicationDetails: {
+        name: args.name,
+        bio: args.bio,
         university: args.university,
         yearOfStudy: args.yearOfStudy,
         subjects: args.subjects,
@@ -135,10 +139,11 @@ export const approveMentor = mutation({
       }
   
       await ctx.db.patch(args.userId, {
+        name: userToApprove.applicationDetails?.name,
         role: "mentor",
         mentorStatus: "approved",
         subjects: userToApprove.applicationDetails?.subjects,
-        bio: `A mentor studying at ${userToApprove.applicationDetails?.university}.`,
+        bio: userToApprove.applicationDetails?.bio,
       });
     },
   });
