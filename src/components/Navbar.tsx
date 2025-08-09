@@ -23,9 +23,15 @@ export default function Navbar() {
             <span>Pixxel<span className="text-blue-500">Ed</span></span>
           </Link>
 
-          {isSignedIn &&
+          {isSignedIn && userRole !== "none" && userRole !== "admin" &&
           <div className="hidden md:block">
             <Link href="/dashboard" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Dashboard</Link>
+          </div>
+          }
+
+          {isSignedIn && userRole === "admin" && 
+          <div className="hidden md:block">
+            <Link href="/admin" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Admin Dashboard</Link>
           </div>
           }
           
