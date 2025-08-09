@@ -118,6 +118,7 @@ export const applyToBeMentor = mutation({
     }
 
     await ctx.db.patch(user._id, {
+      name: args.name,
       mentorStatus: "pending",
       applicationDetails: {
         name: args.name,
@@ -292,6 +293,3 @@ export const connectToMentor = mutation({
     }
   },
 });
-
-
-
