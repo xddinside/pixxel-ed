@@ -1,5 +1,12 @@
 # PixxelEd
 
+### known endpoints
+
+- /dashboard
+- /find-mentor
+- /admin (only accessible by admin)
+- /role-selection (automatically redirected here on sign up)
+
 ## TODO
 
 - [x] make it deploy (Vercel)

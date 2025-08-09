@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import "./page.css";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {useGSAP} from "@gsap/react";
@@ -13,48 +13,47 @@ gsap.registerPlugin(useGSAP);
 
 const Home= () =>{
 
-useGSAP(() => {
-  gsap.registerPlugin(ScrollTrigger, SplitText);
+  useGSAP(() => {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
 
-  // Select all headings
-  document.querySelectorAll(".animated-heading").forEach((heading) => {
-    const split = new SplitText(heading, {
-      type: "words,chars",
-      wordsClass: "word",
-      charsClass: "letter"
-    });
+    document.querySelectorAll(".animated-heading").forEach((heading) => {
+      const split = new SplitText(heading, {
+        type: "words,chars",
+        wordsClass: "word",
+        charsClass: "letter"
+      });
 
-    gsap.fromTo(
-      split.chars,
-      {
-        y: 50,
-        opacity: 0,
-        color:"rgba(255,255,255,0)",
-        "-webkit-text-stroke": "2px white"
-      },
-      {
-        y: 0,
-        opacity: 1,
-        color: "var(--foreground)",
-        "-webkit-text-stroke": "2px transparent",
-        stagger: 0.05,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: heading, // unique trigger per heading
-          start: "top 50%",
-          end: "top -80%",
-          pin: true,
-          scrub: 1
+      gsap.fromTo(
+        split.chars,
+        {
+          y: 50,
+          opacity: 0,
+          color:"rgba(255,255,255,0)",
+          "-webkit-text-stroke": "2px white"
+        },
+        {
+          y: 0,
+          opacity: 1,
+          color: "var(--foreground)",
+          "-webkit-text-stroke": "2px transparent",
+          stagger: 0.05,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: heading, // unique trigger per heading
+            start: "top 50%",
+            end: "top -80%",
+            pin: true,
+            scrub: 1
+          }
         }
-      }
-    );
+      );
+    });
   });
-});
 
   const brandName = "PixxelEd";
 
   // Container animation — waits and triggers each child letter in sequence
-  const titleContainerVariants = {
+  const titleContainerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -65,7 +64,7 @@ useGSAP(() => {
   };
 
   // Each letter's animation
-  const letterVariants = {
+  const letterVariants: Variants = {
     hidden: { opacity: 0, y: 100, rotateX: -90 },
     visible: {
       opacity: 1,
@@ -126,7 +125,7 @@ useGSAP(() => {
         <div className="animation-space-130"></div>
         <h3>Inspire, guide, and shape future leaders.</h3>
 
-          <div className="card-container">
+        <div className="card-container">
           <div className="card">
             <div className="card-heading">Guide</div>
             <div className="card-content">Your experience can light the way for others.</div>
@@ -150,7 +149,7 @@ useGSAP(() => {
         <div className="animation-space-130"></div>
         <h3>“Learn smarter, grow faster with expert mentorship.”</h3>
 
-                  <div className="card-container">
+        <div className="card-container">
           <div className="card">
             <div className="card-heading">Explore</div>
             <div className="card-content">Find the mentor who fits your learning journey.</div>
