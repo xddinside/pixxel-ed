@@ -23,7 +23,7 @@ export const createUser = internalMutation({
       clerkId: args.clerkId,
       name: args.name,
       email: args.email ?? undefined,
-      role: "student",
+      role: "none",
       mentorStatus: "none",
     });
   },

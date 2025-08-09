@@ -7,7 +7,7 @@ export default defineSchema({
     clerkId: v.string(),
     email: v.optional(v.string()),
 
-    role: v.union(v.literal("student"), v.literal("mentor"), v.literal("admin")),
+    role: v.union(v.literal("student"), v.literal("mentor"), v.literal("admin"), v.literal("none")),
     mentorStatus: v.union(
       v.literal("none"),
       v.literal("pending"),
