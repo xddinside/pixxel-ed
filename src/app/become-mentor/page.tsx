@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useMutation } from 'convex/react';
+import { useState, useEffect } from 'react';
+import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { Doc } from '@/convex/_generated/dataModel';
 
 const subjects = [
   { label: 'Mathematics', value: 'mathematics' },
@@ -24,13 +25,22 @@ const subjects = [
 
 export default function BecomeMentorPage() {
   const { isSignedIn, isLoaded } = useUser();
+  const currentUser = useQuery(api.users.getCurrentUser);
   const [university, setUniversity] = useState('');
   const [yearOfStudy, setYearOfStudy] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [grades, setGrades] = useState<Record<string, string>>({});
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitted' | 'error'>('idle');
   const applyToBeMentor = useMutation(api.users.applyToBeMentor);
 
-  if (!isLoaded) return <div className="p-4">Loading...</div>;
+  useEffect(() => {
+    if (currentUser?.mentorStatus && (currentUser.mentorStatus === 'pending' || currentUser.mentorStatus === 'approved')) {
+      setSubmissionStatus('submitted');
+    }
+  }, [currentUser]);
+
+
+  if (!isLoaded || currentUser === undefined) return <div className="p-4">Loading...</div>;
   if (!isSignedIn) return <div className="p-4">Please sign in to apply.</div>;
 
   const handleSubjectChange = (newSubjects: string[]) => {
@@ -80,6 +90,7 @@ export default function BecomeMentorPage() {
         grades: orderedGrades,
       });
       toast.success('Application submitted!');
+      setSubmissionStatus('submitted');
       setUniversity('');
       setYearOfStudy('');
       setSelectedSubjects([]);
@@ -89,8 +100,24 @@ export default function BecomeMentorPage() {
       toast.error('Failed to submit application.', {
         description: errorMessage,
       });
+      setSubmissionStatus('error');
     }
   };
+
+  if (submissionStatus === 'submitted') {
+    return (
+      <div className="max-w-md mx-auto mt-12 p-4 text-center">
+        <Card>
+          <CardHeader>
+            <CardTitle>Application Submitted</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Thank you for your application. We will review it and get back to you soon.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto mt-12 p-4">
