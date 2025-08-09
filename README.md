@@ -30,8 +30,8 @@
         - The students can choose their mentor from this page.
         - [ ] make it so that the student can click on the connect button only once, and then it shows a toast to show that they're connected. also instead of the connect button, show Connected to mentor (after user has clicked on it, to make the button disabled).
 
-- [ ] make a "none" role, and make it the default
-- [ ] make it so that if a user's role is "none", always redirect them to the /role-selection page
+- [x] make a "none" role, and make it the default
+- [x] make it so that if a user's role is "none", always redirect them to the /role-selection page
 
 - [ ] handle the connection between the students and the mentor, so that every student stores who their mentor is and every mentor stores who their student is (so that we can access them to show them to the user)
 
