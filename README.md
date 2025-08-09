@@ -4,7 +4,7 @@
 
 - [x] make it deploy (Vercel)
 - [ ] create mock landing page
-- [ ] setup Convex (for database and backend stuff)
+- [x] setup Convex (for database and backend stuff)
 - [x] setup auth (using Clerk with ConvexAuth)
 - [ ] create dashboards for student and mentor
 - [ ] create chat section between mentors and students
