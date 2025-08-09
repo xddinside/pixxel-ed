@@ -45,6 +45,39 @@ export const getCurrentUser = query({
   },
 });
 
+// Mutation to update user's role from the role selection page
+export const updateUserRole = mutation({
+  args: {
+    role: v.union(v.literal("student"), v.literal("mentor")),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("You must be logged in to select a role.");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    // Only allow updating role if it's currently 'none'
+    if (user.role !== "none") {
+      console.log(`User ${user.name} already has a role: ${user.role}. Role update skipped.`);
+      return;
+    }
+
+    await ctx.db.patch(user._id, {
+      role: args.role,
+    });
+  },
+});
+
+
 // Mutation for a user to apply to become a mentor
 export const applyToBeMentor = mutation({
   args: {

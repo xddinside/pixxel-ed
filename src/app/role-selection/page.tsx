@@ -4,15 +4,32 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { School, UserPlus } from 'lucide-react';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 export default function RoleSelectionPage() {
   const router = useRouter();
+  const updateUserRole = useMutation(api.users.updateUserRole);
+  const [isLoading, setIsLoading] = useState<null | 'student' | 'mentor'>(null);
 
-  const handleRoleSelection = (role: 'student' | 'mentor') => {
-    if (role === 'mentor') {
-      router.push('/become-mentor');
-    } else {
-      router.push('/find-mentor');
+  const handleRoleSelection = async (role: 'student' | 'mentor') => {
+    setIsLoading(role);
+    try {
+      await updateUserRole({ role });
+      toast.success(`You have selected the ${role} role!`);
+      if (role === 'mentor') {
+        router.push('/become-mentor');
+      } else {
+        router.push('/find-mentor');
+      }
+    } catch (error) {
+      toast.error("Failed to update role.", {
+        description: String(error),
+      });
+    } finally {
+        setIsLoading(null);
     }
   };
 
@@ -32,8 +49,12 @@ export default function RoleSelectionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Button onClick={() => handleRoleSelection('student')} className="w-full max-w-xs">
-              Find a Mentor
+            <Button
+              onClick={() => handleRoleSelection('student')}
+              className="w-full max-w-xs"
+              disabled={isLoading !== null}
+            >
+              {isLoading === 'student' ? 'Selecting...' : 'Find a Mentor'}
             </Button>
           </CardContent>
         </Card>
@@ -47,8 +68,12 @@ export default function RoleSelectionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Button onClick={() => handleRoleSelection('mentor')} className="w-full max-w-xs">
-              Become a Mentor
+            <Button
+              onClick={() => handleRoleSelection('mentor')}
+              className="w-full max-w-xs"
+              disabled={isLoading !== null}
+            >
+              {isLoading === 'mentor' ? 'Selecting...' : 'Become a Mentor'}
             </Button>
           </CardContent>
         </Card>
@@ -56,4 +81,3 @@ export default function RoleSelectionPage() {
     </div>
   );
 }
-

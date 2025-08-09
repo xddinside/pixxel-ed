@@ -14,13 +14,16 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-5 flex items-center justify-between ">
       <div className="flex items-center gap-6 px-4 sm:px-6">
         <h1 className="text-xl font-extrabold md:text-3xl flex gap-6">
+
           <Link href={"/"} className="flex gap-2">
             <BookOpenText className="size-6 md:size-8 text-blue-500" />
             <span>Pixxel<span className="text-blue-500">Ed</span></span>
           </Link>
-          <div className="">
+
+          <div>
             <Link href="/dashboard" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Dashboard</Link>
           </div>
+
         </h1>
       </div>
 
