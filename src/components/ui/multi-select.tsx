@@ -95,11 +95,8 @@ function MultiSelect({
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent 
+      <PopoverContent
         className="w-[var(--radix-popover-trigger-width)] p-0"
-        onMouseDown={(e) => {
-            e.preventDefault()
-        }}
       >
         <Command className={className}>
           <CommandInput placeholder="Search..." />
@@ -110,6 +107,7 @@ function MultiSelect({
                 <CommandItem
                   key={option.value}
                   onSelect={() => handleSelect(option.value)}
+                  onClick={() => handleSelect(option.value)}
                 >
                   <Check
                     className={cn(

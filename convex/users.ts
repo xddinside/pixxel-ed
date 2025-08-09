@@ -115,26 +115,33 @@ export const getApprovedMentors = query({
 
 // Admin-only mutation to approve a mentor application
 export const approveMentor = mutation({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const adminUser = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .unique();
-
-    if (!adminUser || adminUser.role !== "admin") {
-      throw new Error("You are not authorized to perform this action.");
-    }
-
-    await ctx.db.patch(args.userId, {
-      role: "mentor",
-      mentorStatus: "approved",
-    });
-  },
-});
+    args: { userId: v.id("users") },
+    handler: async (ctx, args) => {
+      const identity = await ctx.auth.getUserIdentity();
+      if (!identity) throw new Error("Not authenticated");
+  
+      const adminUser = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+        .unique();
+  
+      if (!adminUser || adminUser.role !== "admin") {
+        throw new Error("You are not authorized to perform this action.");
+      }
+  
+      const userToApprove = await ctx.db.get(args.userId);
+      if (!userToApprove) {
+        throw new Error("User to approve not found.");
+      }
+  
+      await ctx.db.patch(args.userId, {
+        role: "mentor",
+        mentorStatus: "approved",
+        subjects: userToApprove.applicationDetails?.subjects,
+        bio: `A mentor studying at ${userToApprove.applicationDetails?.university}.`,
+      });
+    },
+  });
 
 // Admin-only mutation to reject a mentor application
 export const rejectMentor = mutation({

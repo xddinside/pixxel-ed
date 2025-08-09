@@ -8,7 +8,7 @@
 - [x] setup auth (using Clerk with ConvexAuth)
 
 - [ ] complete mentor form with the correct schema and data being stored like in the point below
-- [ ] in the applicationDetails (for becoming a mentor), take in fields like: 
+- [x] in the applicationDetails (for becoming a mentor), take in fields like: 
     - school / university name
     - subject(s) user wants to mentor in (max 3 subjects)
         - drop down list of a lot of subjects, mostly popular ones like maths, science, physics, chemistry etc.
