@@ -164,9 +164,7 @@ useGSAP(() => {
             <div className="card-content">Turn knowledge into achievements you’re proud of.</div>
           </div>
         </div>
-
       </div>
-      <div className="section"></div>
 
     </div>
   );
