@@ -29,11 +29,29 @@ export const createUser = internalMutation({
   },
 });
 
+export const getCurrentUser = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    return user;
+  },
+});
+
 // Mutation for a user to apply to become a mentor
 export const applyToBeMentor = mutation({
   args: {
     university: v.string(),
     yearOfStudy: v.number(),
+    subjects: v.array(v.string()),
+    grades: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -55,6 +73,8 @@ export const applyToBeMentor = mutation({
       applicationDetails: {
         university: args.university,
         yearOfStudy: args.yearOfStudy,
+        subjects: args.subjects,
+        grades: args.grades,
       },
     });
   },
@@ -80,6 +100,16 @@ export const getPendingMentors = query({
       .query("users")
       .filter((q) => q.eq(q.field("mentorStatus"), "pending"))
       .collect();
+  },
+});
+
+export const getApprovedMentors = query({
+  handler: async (ctx) => {
+    const mentors = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("mentorStatus"), "approved"))
+      .collect();
+    return mentors;
   },
 });
 
