@@ -42,7 +42,8 @@
     - School / uni
     - Grades (in the subject they'd selected, just to give the mentors an idea of their students)
 
-- [ ] when the mentor submits the form (in /become-mentor), set the name outside the application details as well 
+- [x] when the mentor submits the form (in /become-mentor), set the name outside the application details as well 
+- [x] redirect the mentor (after they select the role as mentor) to the /become-mentor page always (isntead of the dashboard), until they fill the form in the /become-mentor page.
 
 - [ ] create dashboards for student and mentor
     - [ ] in the mentor dashboard, the user can see it only if they're a mentor, and can see their students and can chat with them.

@@ -15,16 +15,20 @@ function RoleRedirect({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     useEffect(() => {
-        if (currentUser) {
+        if (currentUser && pathname !== '/') {
             if (currentUser.role === 'none' && pathname !== '/role-selection') {
                 router.push('/role-selection');
             } else if (currentUser.role !== 'none' && pathname === '/role-selection') {
+                router.push('/dashboard');
+            } else if (currentUser.role === 'mentor' && currentUser.mentorStatus === 'none' && pathname !== '/become-mentor') {
+                router.push('/become-mentor');
+            } else if (currentUser.role === 'mentor' && currentUser.mentorStatus !== 'none' && pathname === '/become-mentor') {
                 router.push('/dashboard');
             }
         }
     }, [currentUser, pathname, router]);
 
-    if (currentUser && currentUser.role === 'none' && pathname !== '/role-selection') {
+    if (currentUser && pathname !== '/' && ((currentUser.role === 'none' && pathname !== '/role-selection') || (currentUser.role === 'mentor' && currentUser.mentorStatus === 'none' && pathname !== '/become-mentor'))) {
         return <div>Loading...</div>;
     }
 
