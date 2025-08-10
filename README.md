@@ -10,7 +10,7 @@ This project addresses the following problem statement:
 
 ### ✨ Live Demo
 
-[Link to your deployed Vercel application]
+**PixxelEd -**  https://pixxel-ed.vercel.app/
 
 -----
 
