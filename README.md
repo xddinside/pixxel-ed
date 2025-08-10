@@ -35,7 +35,7 @@
 
 - [x] handle the connection between the students and the mentor, so that every student stores who their mentor is and every mentor stores who their student is (so that we can access them to show them to the user)
 
-- [ ] when the student is selected in the /role-selection, make it so that the user gets redirected to a new page where the user has to write their details (like how we've implemented the /become-mentor page). take in details and store them, such as:
+- [x] when the student is selected in the /role-selection, make it so that the user gets redirected to a new page where the user has to write their details (like how we've implemented the /become-mentor page). take in details and store them, such as:
     - Name
     - Subjects [ (that they'd like to get mentored in, only to show their preference, doesn't lock them), (also, take it in a dropdown like we've done in /become-mentor) ]
     - Bio (that their mentors will be able to see, to tell them about themselves)
@@ -51,12 +51,12 @@
     - [x] in the student dashboard, the user can see their mentors (only if they're a student), and can chat with their mentors.
         - [x] use the mentorIds to iterate through and show each mentor
 
-- [ ] add dummy data for convex table to show multiple mentors (manly for the find-mentor page)
+- [x] add dummy data for convex table to show multiple mentors (manly for the find-mentor page)
 
 - [x] create chat section between mentors and students
     - [x] setup image and document uploads and doc downloads in the chat for both sides
 
-- [ ] make the file upload buttons nicer (acd check document upload and download like pdf)
+- [x] make the file upload buttons nicer (and check document upload and download like pdf)
 
 - [ ] add a notification button on the topright in nav between the user profile from clerk and the mode toggle button (the notif button shows only if the user is logged in).
     - Handle the logic to send a notification there in a notification bubble if a chat message is received from anyone.
