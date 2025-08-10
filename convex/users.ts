@@ -1,4 +1,4 @@
-import { Doc } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -327,5 +327,107 @@ export const updateStudentDetails = mutation({
         grades: args.grades,
       },
     });
+  },
+});
+
+export const getUnreadChatsCount = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return 0;
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) {
+      return 0;
+    }
+
+    const allChatUsers = [...(user.studentIds ?? []), ...(user.mentorIds ?? [])];
+    if (allChatUsers.length === 0) {
+      return 0;
+    }
+
+    const chatIds = allChatUsers.map(otherUserId => {
+      return [user._id, otherUserId].sort().join('_');
+    });
+
+    let unreadCount = 0;
+    for (const chatId of chatIds) {
+      const lastMessage = await ctx.db
+        .query("messages")
+        .withIndex("by_chatId", (q) => q.eq("chatId", chatId))
+        .order("desc")
+        .first();
+
+      if (lastMessage && lastMessage.userId !== user._id) {
+        unreadCount++;
+      }
+    }
+    return unreadCount;
+  },
+});
+
+export const getChatsWithUnreadStatus = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return { students: [], mentors: [] };
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) {
+      return { students: [], mentors: [] };
+    }
+
+    const checkUnread = async (otherUserId: Id<"users">) => {
+      const chatId = [user._id, otherUserId].sort().join('_');
+      const lastMessage = await ctx.db
+        .query("messages")
+        .withIndex("by_chatId", q => q.eq("chatId", chatId))
+        .order("desc")
+        .first();
+      return lastMessage ? lastMessage.userId !== user._id : false;
+    };
+
+    const students = user.studentIds
+      ? await Promise.all(
+          user.studentIds.map(async (studentId) => {
+            const student = await ctx.db.get(studentId);
+            const hasUnreadMessages = await checkUnread(studentId);
+            return { ...student, hasUnreadMessages };
+          })
+        )
+      : [];
+
+    const mentors = user.mentorIds
+      ? await Promise.all(
+          user.mentorIds.map(async (mentorId) => {
+            const mentor = await ctx.db.get(mentorId);
+            const hasUnreadMessages = await checkUnread(mentorId);
+            return { ...mentor, hasUnreadMessages };
+          })
+        )
+      : [];
+
+    return {
+      students: students.filter((s) => s !== null) as (Doc<"users"> & { hasUnreadMessages: boolean })[],
+      mentors: mentors.filter((m) => m !== null) as (Doc<"users"> & { hasUnreadMessages: boolean })[],
+    };
+  },
+});
+
+export const getUserById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.userId);
+    return user;
   },
 });

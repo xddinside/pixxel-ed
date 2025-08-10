@@ -58,17 +58,15 @@
 
 - [x] make the file upload buttons nicer (and check document upload and download like pdf)
 
-- [ ] add a notification button on the topright in nav between the user profile from clerk and the mode toggle button (the notif button shows only if the user is logged in).
+- [x] add a notification button on the topright in nav between the user profile from clerk and the mode toggle button (the notif button shows only if the user is logged in).
     - Handle the logic to send a notification there in a notification bubble if a chat message is received from anyone.
-
-- [ ] change the mutation so that when a user is deleted, it gets the corresponding connected student / admin (if any) and then removes the id of the user that was deleted from their list of connected student / mentor Ids. basically, let's say mentor A had a student B, and A deletes his account. then in the mentorIds of B, we should delete the Id of A (as A no longer exists in our db after deletion)
-
-- [ ] improve the landing page
-    - remove the excess empty space below the last part
-    - add footer at the bottom of the page
-    - (maybe) make the space between each showcase smaller (so we have to scroll less)
 
 ### TODO if extra time (not in order)
 
 - [ ] in the mentor form, take grades in image and pdf form, and make them viewable from the admin's side on his dashboard
 - [ ] allow mentor to stop accepting students any longer, which would prevent them from being visible in the page where students can search for mentors. the mentors can still be a mentor and chat with their current students however.
+- [ ] change the mutation so that when a user is deleted, it gets the corresponding connected student / admin (if any) and then removes the id of the user that was deleted from their list of connected student / mentor Ids. basically, let's say mentor A had a student B, and A deletes his account. then in the mentorIds of B, we should delete the Id of A (as A no longer exists in our db after deletion)
+
+- [ ] improve the landing page
+    - add footer at the bottom of the page
+    - (maybe) make the space between each showcase smaller (so we have to scroll less)

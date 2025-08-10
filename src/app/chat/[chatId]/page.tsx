@@ -3,14 +3,22 @@
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useParams } from 'next/navigation';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState, KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@clerk/nextjs';
 import './page.css';
-import { SendHorizonal, Download, Image, FileText } from 'lucide-react';
+import { SendHorizonal, Download, Image as ImageIcon, FileText } from 'lucide-react';
 import { UploadButton } from '@/utils/uploadthing';
 import { toast } from 'sonner';
+import { Id } from '@/convex/_generated/dataModel';
+import Image from 'next/image'; 
+
+type UploadFileResponse = {
+  url: string;
+  name: string;
+  type: string;
+};
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -18,7 +26,11 @@ export default function ChatPage() {
   const sendMessage = useMutation(api.messages.send);
   const [newMessageText, setNewMessageText] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
-  const { user } = useUser();
+  const { user: clerkUser } = useUser();
+  const currentUser = useQuery(api.users.getCurrentUser);
+
+  const otherUserId = chatId?.split('_').find(id => id !== currentUser?._id) as Id<"users"> | undefined;
+  const otherUser = useQuery(api.users.getUserById, otherUserId ? { userId: otherUserId } : 'skip');
 
   useEffect(() => {
     if (listRef.current) {
@@ -26,15 +38,26 @@ export default function ChatPage() {
     }
   }, [messages]);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSendMessage = async () => {
     if (newMessageText.trim() !== "") {
       await sendMessage({ chatId, text: newMessageText });
       setNewMessageText("");
     }
   };
 
-  const onUploadComplete = (res: any) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleSendMessage();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const onUploadComplete = (res: UploadFileResponse[]) => {
     if (res) {
       const file = res[0];
       sendMessage({
@@ -54,37 +77,36 @@ export default function ChatPage() {
   return (
     <div className="chat-wrapper">
       <div className="chat-container">
-        {/* Chat Header and Messages remain the same */}
         <div className="chat-header">
-          <h2 className="font-bold text-2xl">Chat</h2>
+          <h2 className="font-bold text-2xl">
+            {otherUser ? `Chat with ${otherUser.name}` : 'Chat'}
+          </h2>
         </div>
         <div ref={listRef} className="chat-messages">
           {messages?.map((message) => (
             <div
               key={message._id}
-              className={`message-container ${message.clerkId === user?.id ? 'sent' : 'received'}`}
+              className={`message-container ${message.clerkId === clerkUser?.id ? 'sent' : 'received'}`}
             >
               <div className="message-bubble">
                 <div className="message-author">{message.author}</div>
                 {message.text && <p className="message-text">{message.text}</p>}
                 {message.fileUrl && (
                   message.fileType?.startsWith('image/') ? (
-                    <img src={message.fileUrl} alt={message.fileName || 'Uploaded image'} className="uploaded-image" />
+                    <Image src={message.fileUrl} alt={message.fileName || 'Uploaded image'} className="uploaded-image" width={300} height={300} style={{ width: '100%', height: 'auto' }} />
                   ) : (
-                    <a href={message.fileUrl} target="_blank" rel="noopener noreferrer" className="file-download-link">
-                      <Download className="file-download-icon" />
-                      <span>{message.fileName}</span>
-                    </a>
-                  )
+                      <a href={message.fileUrl} target="_blank" rel="noopener noreferrer" className="file-download-link">
+                        <Download className="file-download-icon" />
+                        <span>{message.fileName}</span>
+                      </a>
+                    )
                 )}
               </div>
             </div>
           ))}
         </div>
         <div className="chat-footer">
-          {/* START: Reduced gap on the form */}
           <form onSubmit={handleSubmit} className="flex items-end gap-1">
-            {/* START: Changed to items-baseline and added a gap between buttons */}
             <div className="flex items-baseline gap-2">
               <UploadButton
                 endpoint="imageUploader"
@@ -96,7 +118,7 @@ export default function ChatPage() {
                     return (
                       <Button asChild variant="ghost" size="icon" disabled={!ready}>
                         <div>
-                          <Image size={20} />
+                          <ImageIcon size={20} className="text-foreground" />
                           <span className="sr-only">Upload Image</span>
                         </div>
                       </Button>
@@ -121,7 +143,7 @@ export default function ChatPage() {
                     return (
                       <Button asChild variant="ghost" size="icon" disabled={!ready}>
                         <div>
-                          <FileText size={20} />
+                          <FileText size={20} className="text-foreground" />
                           <span className="sr-only">Upload Document</span>
                         </div>
                       </Button>
@@ -137,12 +159,12 @@ export default function ChatPage() {
                 }}
               />
             </div>
-            {/* END: ClassName changes */}
-            
+
             <div className="relative flex-grow px-6 py-4">
               <Textarea
                 value={newMessageText}
                 onChange={(event) => setNewMessageText(event.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Type a message…"
                 className="flex-grow resize-none pr-12"
                 rows={3}
@@ -158,7 +180,6 @@ export default function ChatPage() {
               </Button>
             </div>
           </form>
-          {/* END: ClassName changes */}
         </div>
       </div>
     </div>

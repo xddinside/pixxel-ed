@@ -1,3 +1,5 @@
+// src/app/dashboard/page.tsx
+
 'use client';
 
 import { useQuery } from 'convex/react';
@@ -7,10 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
-  const students = useQuery(api.users.getUsersByIds, { userIds: studentIds ?? [] });
+function MentorDashboard({ students }: { students: (Doc<"users"> & { hasUnreadMessages: boolean })[] }) {
   const currentUser = useQuery(api.users.getCurrentUser);
-
 
   if (students === undefined || currentUser === undefined) {
     return <div>Loading students...</div>;
@@ -24,9 +24,16 @@ function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
       ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {students.map((student) => {
+              if (!student) return null;
               const chatId = [currentUser?._id, student._id].sort().join('_');
-              return(
-                <Card key={student._id}>
+              return (
+                <Card key={student._id} className="relative">
+                  {student.hasUnreadMessages && (
+                    <span className="absolute top-2 right-2 flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                    </span>
+                  )}
                   <CardHeader>
                     <CardTitle>{student.name}</CardTitle>
                   </CardHeader>
@@ -37,15 +44,15 @@ function MentorDashboard({ studentIds }: { studentIds: Id<"users">[] }) {
                     </Link>
                   </CardContent>
                 </Card>
-              )})}
+              )
+            })}
           </div>
         )}
     </div>
   );
 }
 
-function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
-  const mentors = useQuery(api.users.getUsersByIds, { userIds: mentorIds ?? [] });
+function StudentDashboard({ mentors }: { mentors: (Doc<"users"> & { hasUnreadMessages: boolean })[] }) {
   const currentUser = useQuery(api.users.getCurrentUser);
 
   if (mentors === undefined || currentUser === undefined) {
@@ -60,9 +67,16 @@ function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
       ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mentors.map((mentor) => {
+              if (!mentor) return null;
               const chatId = [currentUser?._id, mentor._id].sort().join('_');
-              return(
-                <Card key={mentor._id}>
+              return (
+                <Card key={mentor._id} className="relative">
+                  {mentor.hasUnreadMessages && (
+                    <span className="absolute top-2 right-2 flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                    </span>
+                  )}
                   <CardHeader>
                     <CardTitle>{mentor.name}</CardTitle>
                   </CardHeader>
@@ -80,7 +94,8 @@ function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
                     </Link>
                   </CardContent>
                 </Card>
-              )})}
+              )
+            })}
           </div>
         )}
     </div>
@@ -89,8 +104,9 @@ function StudentDashboard({ mentorIds }: { mentorIds: Id<"users">[] }) {
 
 export default function DashboardPage() {
   const currentUser = useQuery(api.users.getCurrentUser);
+  const chats = useQuery(api.users.getChatsWithUnreadStatus);
 
-  if (currentUser === undefined) {
+  if (currentUser === undefined || chats === undefined) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
         Loading dashboard...
@@ -117,8 +133,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {currentUser.role === 'mentor' && <MentorDashboard studentIds={currentUser.studentIds ?? []} />}
-      {currentUser.role === 'student' && <StudentDashboard mentorIds={currentUser.mentorIds ?? []} />}
+      {currentUser.role === 'mentor' && <MentorDashboard students={chats.students} />}
+      {currentUser.role === 'student' && <StudentDashboard mentors={chats.mentors} />}
 
     </div>
   );

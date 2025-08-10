@@ -7,6 +7,7 @@ import { BookOpenText } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { NotificationButton } from "./NotificationButton";
 
 export default function Navbar() {
   const { isSignedIn } = useUser();
@@ -24,17 +25,17 @@ export default function Navbar() {
           </Link>
 
           {isSignedIn && userRole !== "none" && userRole !== "admin" &&
-          <div className="hidden md:block">
-            <Link href="/dashboard" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Dashboard</Link>
-          </div>
+            <div className="hidden md:block">
+              <Link href="/dashboard" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Dashboard</Link>
+            </div>
           }
 
-          {isSignedIn && userRole === "admin" && 
-          <div className="hidden md:block">
-            <Link href="/admin" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Admin Dashboard</Link>
-          </div>
+          {isSignedIn && userRole === "admin" &&
+            <div className="hidden md:block">
+              <Link href="/admin" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Admin Dashboard</Link>
+            </div>
           }
-          
+
           { isSignedIn && (userRole === "student") && (
             <div>
               <Link href="/find-mentor" className="text-lg font-normal md:text-xl hover:underline decoration-blue-500">Find a mentor</Link>
@@ -70,10 +71,11 @@ export default function Navbar() {
 
           </div>
         ) : (
-          <div className="flex items-center gap-4">
-            <UserButton afterSignOutUrl="/" />
-          </div>
-        )}
+            <div className="flex items-center gap-4">
+              <NotificationButton />
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          )}
       </div>
     </nav>
   );
