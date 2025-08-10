@@ -12,6 +12,8 @@ This project addresses the following problem statement:
 
 **PixxelEd -**  https://pixxel-ed.vercel.app/
 
+IMPORTANT: I've changed it so that instead of admin having to approve mentors, they automatically will get approved, to make it easier for you to demo this app, as I won't be there to approve mentors as admin always, when you're demoing.
+
 -----
 
 ## 🚀 Key Features

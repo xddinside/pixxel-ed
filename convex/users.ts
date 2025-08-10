@@ -38,7 +38,7 @@ export const getUsersByIds = query({
     const users = await Promise.all(
       args.userIds.map((userId) => ctx.db.get(userId))
     );
-    
+
     return users.filter((user): user is Doc<"users"> => user !== null);
   },
 });
@@ -79,7 +79,6 @@ export const updateUserRole = mutation({
       throw new Error("User not found.");
     }
 
-    // Only allow updating role if it's currently 'none'
     if (user.role !== "none") {
       console.log(`User ${user.name} already has a role: ${user.role}. Role update skipped.`);
       return;
@@ -91,8 +90,7 @@ export const updateUserRole = mutation({
   },
 });
 
-
-// Mutation for a user to apply to become a mentor
+// MODIFIED: Mutation for a user to apply to become a mentor (with instant approval)
 export const applyToBeMentor = mutation({
   args: {
     name: v.string(),
@@ -117,10 +115,14 @@ export const applyToBeMentor = mutation({
       throw new Error("User not found.");
     }
 
+    // Instantly approve the mentor
     await ctx.db.patch(user._id, {
       name: args.name,
-      mentorStatus: "pending",
-      applicationDetails: {
+      role: "mentor", // Set role directly
+      mentorStatus: "approved", // Set status directly
+      bio: args.bio, // Populate bio
+      subjects: args.subjects, // Populate subjects
+      applicationDetails: { // Still save the full details for reference
         name: args.name,
         bio: args.bio,
         university: args.university,
@@ -131,6 +133,7 @@ export const applyToBeMentor = mutation({
     });
   },
 });
+
 
 // Admin-only query to get all users with a pending mentor application
 export const getPendingMentors = query({
@@ -167,34 +170,34 @@ export const getApprovedMentors = query({
 
 // Admin-only mutation to approve a mentor application
 export const approveMentor = mutation({
-    args: { userId: v.id("users") },
-    handler: async (ctx, args) => {
-      const identity = await ctx.auth.getUserIdentity();
-      if (!identity) throw new Error("Not authenticated");
-  
-      const adminUser = await ctx.db
-        .query("users")
-        .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-        .unique();
-  
-      if (!adminUser || adminUser.role !== "admin") {
-        throw new Error("You are not authorized to perform this action.");
-      }
-  
-      const userToApprove = await ctx.db.get(args.userId);
-      if (!userToApprove) {
-        throw new Error("User to approve not found.");
-      }
-  
-      await ctx.db.patch(args.userId, {
-        name: userToApprove.applicationDetails?.name,
-        role: "mentor",
-        mentorStatus: "approved",
-        subjects: userToApprove.applicationDetails?.subjects,
-        bio: userToApprove.applicationDetails?.bio,
-      });
-    },
-  });
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const adminUser = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!adminUser || adminUser.role !== "admin") {
+      throw new Error("You are not authorized to perform this action.");
+    }
+
+    const userToApprove = await ctx.db.get(args.userId);
+    if (!userToApprove) {
+      throw new Error("User to approve not found.");
+    }
+
+    await ctx.db.patch(args.userId, {
+      name: userToApprove.applicationDetails?.name,
+      role: "mentor",
+      mentorStatus: "approved",
+      subjects: userToApprove.applicationDetails?.subjects,
+      bio: userToApprove.applicationDetails?.bio,
+    });
+  },
+});
 
 // Admin-only mutation to reject a mentor application
 export const rejectMentor = mutation({
@@ -399,22 +402,22 @@ export const getChatsWithUnreadStatus = query({
 
     const students = user.studentIds
       ? await Promise.all(
-          user.studentIds.map(async (studentId) => {
-            const student = await ctx.db.get(studentId);
-            const hasUnreadMessages = await checkUnread(studentId);
-            return { ...student, hasUnreadMessages };
-          })
-        )
+        user.studentIds.map(async (studentId) => {
+          const student = await ctx.db.get(studentId);
+          const hasUnreadMessages = await checkUnread(studentId);
+          return { ...student, hasUnreadMessages };
+        })
+      )
       : [];
 
     const mentors = user.mentorIds
       ? await Promise.all(
-          user.mentorIds.map(async (mentorId) => {
-            const mentor = await ctx.db.get(mentorId);
-            const hasUnreadMessages = await checkUnread(mentorId);
-            return { ...mentor, hasUnreadMessages };
-          })
-        )
+        user.mentorIds.map(async (mentorId) => {
+          const mentor = await ctx.db.get(mentorId);
+          const hasUnreadMessages = await checkUnread(mentorId);
+          return { ...mentor, hasUnreadMessages };
+        })
+      )
       : [];
 
     return {
