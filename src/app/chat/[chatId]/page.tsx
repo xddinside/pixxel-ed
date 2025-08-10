@@ -12,7 +12,7 @@ import { SendHorizonal, Download, Image as ImageIcon, FileText } from 'lucide-re
 import { UploadButton } from '@/utils/uploadthing';
 import { toast } from 'sonner';
 import { Id } from '@/convex/_generated/dataModel';
-import Image from 'next/image'; 
+import Image from 'next/image';
 
 type UploadFileResponse = {
   url: string;
@@ -57,7 +57,8 @@ export default function ChatPage() {
     }
   };
 
-  const onUploadComplete = async (res: UploadFileResponse[]) => {
+  // Improved function with proper error handling
+  const onClientUploadComplete = async (res?: UploadFileResponse[]) => {
     if (res && res.length > 0) {
       const file = res[0];
       try {
@@ -78,6 +79,12 @@ export default function ChatPage() {
       toast.error("Upload finished but no file data was returned.");
     }
   };
+
+  // The missing function that caused the build error
+  const onUploadError = (error: Error) => {
+    toast.error(`Upload Failed: ${error.message}`);
+  };
+
 
   return (
     <div className="chat-wrapper">
@@ -115,7 +122,7 @@ export default function ChatPage() {
             <div className="flex items-baseline gap-2">
               <UploadButton
                 endpoint="imageUploader"
-                onClientUploadComplete={onUploadComplete}
+                onClientUploadComplete={onClientUploadComplete}
                 onUploadError={onUploadError}
                 className='pb-8 ml-1 mr-[-1rem]'
                 content={{
@@ -140,7 +147,7 @@ export default function ChatPage() {
               />
               <UploadButton
                 endpoint="docUploader"
-                onClientUploadComplete={onUploadComplete}
+                onClientUploadComplete={onClientUploadComplete}
                 onUploadError={onUploadError}
                 className='ml-[-0.5rem] mr-[-1rem]'
                 content={{
