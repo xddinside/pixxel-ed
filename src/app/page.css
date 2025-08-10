@@ -1,0 +1,108 @@
+.page{
+    min-height: 200vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    text-align: center;
+    padding: 5vh 0vh;
+    overflow-x: hidden;
+    flex: 0 0 80;
+    box-sizing: border-box;
+}
+
+.page h1{
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: bold;
+}
+
+.section {
+  min-height: 100vh;
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+}
+
+.animated-heading {
+  width: 100%;
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-weight: bold;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25em; /* word gap */
+  justify-content: center;
+}
+
+.section h3{
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+}
+
+.word {
+  display: inline-flex;
+  flex-wrap: nowrap;
+}
+
+.letter {
+  display: inline-block;
+}
+
+.animation-space-100{
+    min-height: 100vh;
+}
+
+.section{
+    flex-direction: start;
+}
+
+.animation-space-130{
+    min-height: 135vh;
+}
+
+.finisher-header {
+  position: relative; /* needed so canvas absolute inside aligns properly */
+  width: 100%;
+  height: 300px; /* or any explicit height */
+  overflow: hidden; /* optional to clip overflow */
+}
+
+.card-container{
+  margin-top: 3vh;
+  width: 80%;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.card{
+  height: 40vh;
+  aspect-ratio: 4/5;
+  border: 2px solid var(--foreground);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 30px 20px;
+  overflow: hidden;
+  margin-top: 5vh;
+}
+
+.card .card-heading{
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: bold;
+  transition: all 1s;
+}
+
+.card .card-content{
+    transition: all 0.2s;
+}
+
+.card:hover .card-heading{
+  translate:0px -20px;
+}
+
+.card:hover .card-content{
+  translate:0px -20px;
+}

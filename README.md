@@ -1,72 +1,120 @@
-# PixxelEd
+# PixxelEd - Mentorship Platform
 
-### known endpoints
+**PixxelEd** is a full-stack web application developed for the **Pixxelhack Webathon**. It's an EdTech platform designed to connect students seeking academic help with experienced mentors and seniors who can provide subject-specific tutoring.
 
-- /dashboard
-- /find-mentor
-- /admin (only accessible by admin)
-- /role-selection (automatically redirected here on sign up)
+### Problem Statement
 
-## TODO
+This project addresses the following problem statement:
 
-- [x] make it deploy (Vercel)
-- [x] create mock landing page
-- [x] setup Convex (for database and backend stuff)
-- [x] setup auth (using Clerk with ConvexAuth)
+> *Create a platform that connects students who need help in specific subjects with their mentors or seniors who can tutor them enabling on-demand, subject specific help.*
 
-- [x] complete mentor form with the correct schema and data being stored like in the point below
-- [x] in the applicationDetails (for becoming a mentor), take in fields like: 
-    - school / university name
-    - subject(s) user wants to mentor in (max 3 subjects)
-        - drop down list of a lot of subjects, mostly popular ones like maths, science, physics, chemistry etc.
-    - recent grades in the subject user is mentoring in
-        - if mentoring in multiple subjects, show input boxes for each subject (eg: if mentoring in 2 subjects, then show 2 input boxes for recent Grades in (subject 1) and Grades in (subject 2) )
-    - [x] take the user's name in the form as well (and tell them that it'll show up to the students applying to them subtly) 
-    - [x] take the user's bio as well, where they can tell the mentor and the students why they should pick them
+### ✨ Live Demo
 
-- [x] when user signs up, show them two nicely styled cards that have choices to either join as a student, or join as a mentor. 
-    - [x] if user clicks on join as a mentor, redirect them to the /become-mentor page
-    - [x] if user clicks on student, redirect them to a new page (find-mentor), where they can see the mentors that are already registered
-        - The students can choose their mentor from this page.
-        - [x] make it so that the student can click on the connect button only once, and then it shows a toast to show that they're connected. also instead of the connect button, show Connected to mentor (after user has clicked on it, to make the button disabled).
+[Link to your deployed Vercel application]
 
-- [x] make a "none" role, and make it the default
-- [x] make it so that if a user's role is "none", always redirect them to the /role-selection page
+-----
 
-- [x] handle the connection between the students and the mentor, so that every student stores who their mentor is and every mentor stores who their student is (so that we can access them to show them to the user)
+## 🚀 Key Features
 
-- [x] when the student is selected in the /role-selection, make it so that the user gets redirected to a new page where the user has to write their details (like how we've implemented the /become-mentor page). take in details and store them, such as:
-    - Name
-    - Subjects [ (that they'd like to get mentored in, only to show their preference, doesn't lock them), (also, take it in a dropdown like we've done in /become-mentor) ]
-    - Bio (that their mentors will be able to see, to tell them about themselves)
-    - School / uni
-    - Grades (in the subject they'd selected, just to give the mentors an idea of their students)
+PixxelEd is a feature-rich platform with distinct user flows for Students, Mentors, and Administrators.
 
-- [x] when the mentor submits the form (in /become-mentor), set the name outside the application details as well 
-- [x] redirect the mentor (after they select the role as mentor) to the /become-mentor page always (isntead of the dashboard), until they fill the form in the /become-mentor page.
+  * **👥 Role-Based System:** Users can sign up and choose their role as either a **Student** or a **Mentor**, with a dedicated administrative backend.
+  * **📝 Detailed Onboarding:**
+      * **Mentors:** A comprehensive application form allows aspiring mentors to submit their bio, university, subjects they specialize in (up to 3), and recent grades for each subject.
+      * **Students:** A simple setup process where students provide their details to help mentors understand their needs.
+  * **🧑‍⚖️ Admin Vetting Dashboard:** An exclusive admin dashboard to review, approve, or reject pending mentor applications, ensuring quality and safety on the platform.
+  * **🔍 Mentor Discovery:** Students can browse a gallery of approved mentors, view their profiles and specializations, and connect with them with a single click.
+  * **🖥️ Personalized Dashboards:**
+      * Mentors can view all their connected students.
+      * Students can see all their mentors.
+      * Dashboards display indicators for unread messages, making it easy to keep track of conversations.
+  * **💬 Real-Time Chat:** Once connected, students and mentors can engage in a one-on-one chat/page.tsx].
+  * **📁 File Sharing:** The chat functionality supports uploading and sharing images and documents (like PDFs and text files) to facilitate learning/page.tsx, xddinside/pixxel-ed/pixxel-ed-647eefefe36ce98711d5c06b35607f5f8eeec6c4/src/app/api/uploadthing/core.ts].
+  * **🔔 Notifications:** A navigation bar icon alerts users to new, unread chat messages, ensuring prompt communication.
+  * **🎨 Animated Landing Page:** A visually appealing landing page built with GSAP and Framer Motion to engage new users.
 
-- [x] create dashboards for student and mentor
-    - [x] in the mentor dashboard, the user can see it only if they're a mentor, and can see their students and can chat with them.
-        - [x] use the studentIDs to iterate through and show each student
-    - [x] in the student dashboard, the user can see their mentors (only if they're a student), and can chat with their mentors.
-        - [x] use the mentorIds to iterate through and show each mentor
+-----
 
-- [x] add dummy data for convex table to show multiple mentors (manly for the find-mentor page)
+## 🛠️ Tech Stack
 
-- [x] create chat section between mentors and students
-    - [x] setup image and document uploads and doc downloads in the chat for both sides
+  * **Framework:** [Next.js](https://nextjs.org/) (with Turbopack)
+  * **Backend & Database:** [Convex](https://www.convex.dev/)
+  * **Authentication:** [Clerk](https://clerk.com/)
+  * **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+  * **UI Components:** [shadcn/ui](https://ui.shadcn.com/), Radix UI
+  * **File Uploads:** [UploadThing](https://uploadthing.com/)
+  * **Animations:** [GSAP](https://gsap.com/) & [Framer Motion](https://www.framer.com/motion/)
+  * **Notifications:** [Sonner](https://www.google.com/search?q=https://sonner.emilkowal.ski/)
+  * **Language:** [TypeScript](https://www.typescriptlang.org/)
 
-- [x] make the file upload buttons nicer (and check document upload and download like pdf)
+-----
 
-- [x] add a notification button on the topright in nav between the user profile from clerk and the mode toggle button (the notif button shows only if the user is logged in).
-    - Handle the logic to send a notification there in a notification bubble if a chat message is received from anyone.
+## ⚙️ Getting Started
 
-### TODO if extra time (not in order)
+To get a local copy up and running, follow these simple steps.
 
-- [ ] in the mentor form, take grades in image and pdf form, and make them viewable from the admin's side on his dashboard
-- [ ] allow mentor to stop accepting students any longer, which would prevent them from being visible in the page where students can search for mentors. the mentors can still be a mentor and chat with their current students however.
-- [ ] change the mutation so that when a user is deleted, it gets the corresponding connected student / admin (if any) and then removes the id of the user that was deleted from their list of connected student / mentor Ids. basically, let's say mentor A had a student B, and A deletes his account. then in the mentorIds of B, we should delete the Id of A (as A no longer exists in our db after deletion)
+### Prerequisites
 
-- [ ] improve the landing page
-    - add footer at the bottom of the page
-    - (maybe) make the space between each showcase smaller (so we have to scroll less)
+  * Node.js (v18 or later)
+  * pnpm package manager
+    ```sh
+    npm install -g pnpm
+    ```
+
+### Installation & Setup
+
+1.  **Clone the repository:**
+
+    ```sh
+    git clone https://github.com/xddinside/pixxel-ed.git
+    cd pixxel-ed
+    ```
+
+2.  **Install dependencies:**
+
+    ```sh
+    pnpm install
+    ```
+
+3.  **Set up environment variables:**
+    Create a `.env.local` file in the root of the project and add the following keys. You will need to create accounts with [Convex](https://www.convex.dev/), [Clerk](https://clerk.com/), and [UploadThing](https://uploadthing.com/) to get these values.
+
+    ```env
+    # Clerk Authentication
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+    CLERK_SECRET_KEY=
+    CLERK_WEBHOOK_SECRET=
+
+    # Convex Backend
+    NEXT_PUBLIC_CONVEX_URL=
+
+    # UploadThing File Uploads
+    UPLOADTHING_SECRET=
+    UPLOADTHING_APP_ID=
+    ```
+
+4.  **Set up Convex Backend:**
+    Run the Convex development server in a separate terminal to sync your schema and functions.
+
+    ```sh
+    npx convex dev
+    ```
+
+5.  **Run the development server:**
+
+    ```sh
+    pnpm dev
+    ```
+
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
+
+-----
+
+## 🔮 Future Scope
+
+While the current implementation is robust, here are some features that could be added in the future:
+
+  * **Enhanced Mentor Vetting:** Allow mentors to upload PDFs or images of their transcripts during application for admins to review.
+  * **Availability Control:** Give mentors the ability to toggle their visibility in the "Find a Mentor" list, allowing them to stop accepting new students without losing contact with existing ones.
+  * **Improved User Deletion Logic:** Implement a system where deleting a user account also removes their ID from their connected students' or mentors' lists.
+  * **UI/UX Enhancements:** Add a footer and refine the landing page animations and layout for a more polished user experience.
