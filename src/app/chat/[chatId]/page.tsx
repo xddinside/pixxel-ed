@@ -57,21 +57,26 @@ export default function ChatPage() {
     }
   };
 
-  const onUploadComplete = (res: UploadFileResponse[]) => {
-    if (res) {
+  const onUploadComplete = async (res: UploadFileResponse[]) => {
+    if (res && res.length > 0) {
       const file = res[0];
-      sendMessage({
-        chatId,
-        fileUrl: file.url,
-        fileName: file.name,
-        fileType: file.type,
-      });
+      try {
+        await sendMessage({
+          chatId,
+          fileUrl: file.url,
+          fileName: file.name,
+          fileType: file.type,
+        });
+        toast.success("Upload complete and message sent!");
+      } catch (error) {
+        console.error("Failed to send message:", error);
+        toast.error("Upload succeeded, but the message failed to send.", {
+          description: String(error),
+        });
+      }
+    } else {
+      toast.error("Upload finished but no file data was returned.");
     }
-    toast.success("Upload complete!");
-  };
-
-  const onUploadError = (error: Error) => {
-    toast.error(`Upload Failed: ${error.message}`);
   };
 
   return (
